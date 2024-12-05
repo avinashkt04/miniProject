@@ -208,14 +208,15 @@ function AssistantSection() {
     }
     const body = JSON.stringify(selected);
     try {
-      const response = await axios.post("http://127.0.0.1:5000/predict", {
+      const response = await axios.post("http://127.0.0.1:8000/predict", {
         symptoms: body,
       });
-      setPrediction(response.data.majority_vote_prediction);
+      
+      setPrediction(response.data[0].majority_vote_prediction);
 
       const queryResponse = await axios.post(
         "http://localhost:8000/api/v1/add-Query",
-        { symptoms: body, prediction: response.data.majority_vote_prediction },
+        { symptoms: body, prediction: response.data[0].majority_vote_prediction },
         { withCredentials: true }
       );
 
