@@ -1,8 +1,8 @@
-import pandas as pd
-import pickle
+import pandas as pd #type: ignore
+import joblib #type: ignore
 
 # List of symptoms
-l1=['back_pain','constipation','abdominal_pain','diarrhoea','mild_fever','yellow_urine',
+symptoms_list=['back_pain','constipation','abdominal_pain','diarrhoea','mild_fever','yellow_urine',
     'yellowing_of_eyes','acute_liver_failure','fluid_overload','swelling_of_stomach',
     'swelled_lymph_nodes','malaise','blurred_and_distorted_vision','phlegm','throat_irritation',
     'redness_of_eyes','sinus_pressure','runny_nose','congestion','chest_pain','weakness_in_limbs',
@@ -24,7 +24,7 @@ l1=['back_pain','constipation','abdominal_pain','diarrhoea','mild_fever','yellow
     'yellow_crust_ooze']
 
 # List of diseases
-disease=['Fungal infection', 'Allergy', 'GERD', 'Chronic cholestasis',
+disease_list=['Fungal infection', 'Allergy', 'GERD', 'Chronic cholestasis',
        'Drug Reaction', 'Peptic ulcer diseae', 'AIDS', 'Diabetes ',
        'Gastroenteritis', 'Bronchial Asthma', 'Hypertension ', 'Migraine',
        'Cervical spondylosis', 'Paralysis (brain hemorrhage)', 'Jaundice',
@@ -40,19 +40,18 @@ disease=['Fungal infection', 'Allergy', 'GERD', 'Chronic cholestasis',
 # List of symptoms (assuming you have it)
 symptoms = ['small_dents_in_nails', 'blood_in_sputum', 'stomach_bleeding', 'belly_pain', 'abnormal_menstruation']
 
-# Load trained models from pickle file
-with open('trained_models.pkl', 'rb') as f:
-    classifiers = pickle.load(f)
+# Load trained models from joblib file
+classifiers = joblib.load('models.joblib')
 
 # Prepare input for prediction
-input_symptoms = pd.DataFrame([[1 if symptom in symptoms else 0 for symptom in l1]], columns=l1)
+input_symptoms = pd.DataFrame([[1 if symptom in symptoms else 0 for symptom in symptoms_list]], columns=symptoms_list)
 
 # Make predictions using each classifier
 results = {}
 for name, clf in classifiers.items():
-    prediction = clf.predict(input_symptoms)
+    prediction = clf.predict(input_symptoms.values)
     results[name] = {
-        'predicted_disease': disease[prediction[0]],
+        'predicted_disease': disease_list[prediction[0]],
         'accuracy': None  # To calculate accuracy, you need actual test data
     }
 
@@ -75,4 +74,3 @@ for name, result in results.items():
 ###################################################################################
 print('\n')
 print("majority disease prediction :: " , majority_vote_prediction)
-print()
